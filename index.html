@@ -26,6 +26,7 @@
             display: flex; justify-content: center; align-items: center; text-align: center; position: relative; user-select: none;
         }
 
+        /* 배경 클래스 */
         body.back-1 { background-image: url('back1.png'); filter: contrast(1.1) saturate(1.2); }
         body.back-oven { background-image: url('oven-bg.jpg'); filter: contrast(1.2) sepia(0.3); } 
         body.back-2 { background-image: url('back2.png'); filter: hue-rotate(-10deg) contrast(1.1); }
@@ -46,15 +47,54 @@
         /* 스테이지 */
         .stage {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; padding: 0; margin: 0;
-            /* [수정] 배경 필터 은은하게 조절 (완전 제거 X, 적당한 어두움 O) */
             background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 100%);
             z-index: 2; flex-direction: column; justify-content: center; align-items: center;
         }
         .stage.active { display: flex; animation: fadeIn 1s; }
         .stage.vn-stage { justify-content: flex-end; }
         
-        /* [수정] 인터루드(대화) 장면도 은은하게 */
         #interlude-stage { z-index: 200; background: rgba(0, 0, 0, 0.4); }
+
+        /* [신규] 튜토리얼 오버레이 (플래시 게임 스타일) */
+        #tutorial-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 9999;
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .tutorial-box {
+            width: 500px; max-width: 90%;
+            background: linear-gradient(135deg, #ff9de2 0%, #ffeb3b 100%); /* 분홍+노랑 그라데이션 */
+            border: 4px solid #fff;
+            border-radius: 20px;
+            box-shadow: 0 0 20px #ff00de, inset 0 0 20px rgba(255,255,255,0.5);
+            padding: 30px;
+            text-align: center;
+            color: #000;
+            font-family: 'SF_HambakSnow', serif;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .tut-header {
+            font-size: 2em; margin-bottom: 20px; color: #fff; 
+            text-shadow: 2px 2px 0 #ff00de, -1px -1px 0 #000;
+        }
+        .tut-content {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px; padding: 20px; margin-bottom: 20px;
+            border: 2px dashed #ff00de;
+            font-size: 1.2em; line-height: 1.6; color: #333;
+        }
+        .tut-btn {
+            background: #ff00de; color: #fff; border: 3px solid #fff;
+            padding: 10px 40px; font-size: 1.5em; cursor: pointer;
+            border-radius: 30px; box-shadow: 0 5px 0 #b3009b;
+            transition: all 0.1s; font-family: 'SF_HambakSnow';
+        }
+        .tut-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #b3009b; background: #ff5eeb; }
+        .tut-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #b3009b; }
+
 
         /* 성찬식 단계 배경 설정 */
         #stage-ritual { background-image: url('back2.png'); background-size: cover; background-position: center; cursor: pointer; position: relative; min-height: 100vh; }
@@ -80,8 +120,7 @@
             text-shadow: 0 0 5px rgba(0,0,0,0.8); z-index: 10; position: relative; 
             font-family: 'SF_HambakSnow';
         }
-        #game-title { position: absolute; top: 100px; left: 0; width: 100%; margin: 0; text-align: center; pointer-events: none; }
-        #stage-2 h2, #stage-dough h2, #stage-topping h2 { margin-top: 80px; }
+        #stage-2 h2, #stage-dough h2, #stage-topping h2 { margin-top: 60px; }
         p { font-size: 1.2em; line-height: 1.6; color: #eee; max-width: 800px; text-shadow: 1px 1px 2px black; }
 
         /* 글리치 효과 */
@@ -102,17 +141,13 @@
         button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #00ff00; }
         button:disabled { background-color: #333; color: #555; border-color: #555; box-shadow: none; cursor: not-allowed; }
 
-        /* 캐릭터 */
+        /* 캐릭터 & VN 스타일 */
         #vn-layer, .vn-layer-common { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
         .vn-char-container {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center; 
-            gap: 50px;
-            z-index: 11;
-            pointer-events: none;
+            display: flex; justify-content: center; align-items: center; gap: 50px;
+            z-index: 11; pointer-events: none;
         }
         .vn-char {
             height: 70vh; width: auto; max-width: 45vw; object-fit: contain; 
@@ -123,7 +158,6 @@
         @keyframes fly { 0% { transform: translateX(0) scaleX(1); opacity: 0; } 50% { transform: translateX(120vw) scaleX(-1); opacity: 0; } 100% { transform: translateX(0) scaleX(-1); opacity: 0; } }
         @keyframes charFadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* 대화창 */
         #vn-dialogue-box, .vn-dialogue-box-common {
             position: absolute; bottom: 30px; left: 50% !important; transform: translateX(-50%) !important;
             width: 90%; max-width: 800px; min-height: 150px; background-color: rgba(0, 0, 0, 0.8);
@@ -134,66 +168,22 @@
         .next-indicator, .next-indicator-common { position: absolute; bottom: 10px; right: 20px; color: #ff00de; font-size: 1.2em; animation: blink 0.5s infinite; display: none; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* 우상 분석 상태창 스타일 */
+        /* 1단계 (우상 파괴) */
         #idol-status-window {
-            position: fixed; 
-            width: 320px;
-            background-color: rgba(0, 0, 0, 0.95);
-            border: 2px solid #fff;
-            box-shadow: 5px 5px 0px #ff00de; 
-            z-index: 10000;
-            padding: 15px;
-            text-align: left;
-            pointer-events: none; 
-            display: none;
-            font-family: 'SF_HambakSnow', sans-serif;
+            position: fixed; width: 320px; background-color: rgba(0, 0, 0, 0.95);
+            border: 2px solid #fff; box-shadow: 5px 5px 0px #ff00de; 
+            z-index: 10000; padding: 15px; text-align: left; pointer-events: none; 
+            display: none; font-family: 'SF_HambakSnow', sans-serif;
         }
-        .status-header {
-            border-bottom: 2px dashed #555;
-            padding-bottom: 10px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .status-name {
-            color: #ccff00;
-            font-size: 1.4em;
-            font-weight: bold;
-        }
-        .status-danger {
-            color: #ff00de;
-            font-size: 0.9em;
-            animation: blink 1s infinite;
-        }
-        .status-body p {
-            color: #ddd;
-            font-size: 1em;
-            line-height: 1.4;
-            margin: 5px 0 15px 0;
-            text-shadow: none;
-        }
-        .status-stat-row {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-            font-size: 0.9em;
-        }
+        .status-header { border-bottom: 2px dashed #555; padding-bottom: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .status-name { color: #ccff00; font-size: 1.4em; font-weight: bold; }
+        .status-danger { color: #ff00de; font-size: 0.9em; animation: blink 1s infinite; }
+        .status-body p { color: #ddd; font-size: 1em; line-height: 1.4; margin: 5px 0 15px 0; text-shadow: none; }
+        .status-stat-row { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.9em; }
         .stat-label { width: 70px; color: #aaa; }
-        .stat-bar-bg {
-            flex-grow: 1;
-            height: 10px;
-            background: #333;
-            border: 1px solid #555;
-        }
-        .stat-bar-fill {
-            height: 100%;
-            background: #ff0000;
-            width: 0%;
-            transition: width 0.3s;
-        }
+        .stat-bar-bg { flex-grow: 1; height: 10px; background: #333; border: 1px solid #555; }
+        .stat-bar-fill { height: 100%; background: #ff0000; width: 0%; transition: width 0.3s; }
 
-        /* 1단계 */
         .idol-container { display: flex; justify-content: space-around; margin-top: 40px; gap: 20px; }
         .idol-wrapper { position: relative; width: 180px; height: 180px; cursor: pointer; transition: transform 0.2s; }
         .idol-wrapper:hover { transform: scale(1.05) rotate(5deg); }
@@ -203,41 +193,21 @@
         .idol-wrapper.destroyed .idol-crack { opacity: 1; }
         @keyframes shatter { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5) rotate(20deg); opacity: 0; filter: blur(10px); } }
 
-        /* 1.5단계 */
+        /* 1.5단계 (반죽) */
         .rhythm-container { position: relative; width: 300px; height: 400px; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 20px; }
         #key-display { width: 160px; height: auto; z-index: 20; margin-bottom: 20px; filter: drop-shadow(0 0 10px #fff); transition: transform 0.2s; }
         #dough-visual { width: 200px; height: 200px; background-color: #ffeaa7; border-radius: 50%; box-shadow: inset -5px -5px 0px rgba(0,0,0,0.1); border: 3px solid #fff; position: relative; transition: transform 0.1s; }
-        .dough-squish { animation: squish 0.15s ease-out; }
-        @keyframes squish { 0% { transform: scale(1, 1); } 50% { transform: scale(1.3, 0.7); } 100% { transform: scale(1, 1); } }
-        .dough-shake { animation: shakeError 0.3s; background-color: #ff7675 !important; }
-        @keyframes shakeError { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
         .progress-wrapper { width: 300px; margin-top: 20px; }
         .progress-bar-bg { width: 100%; height: 20px; background: #000; border: 2px solid #fff; }
         .progress-bar-fill { width: 0%; height: 100%; background: repeating-linear-gradient(45deg, #ff00de, #ff00de 10px, #ff5eeb 10px, #ff5eeb 20px); transition: width 0.2s; }
+        .life-container { font-size: 2rem; margin-bottom: 10px; color: #ff00de; text-shadow: 0 0 5px #fff; }
 
-        /* 1.8단계 */
+        /* 1.8단계 (소스) */
         #sauce-game-area { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto; z-index: 5; overflow: hidden; cursor: crosshair; }
         #stage-sauce h2 { position: absolute; top: 130px; left: 0; width: 100%; margin: 0; z-index: 15; pointer-events: none; text-shadow: 0 0 5px #000; }
-        
-        /* [수정] HUD를 상단이 아닌 게이지 근처로 이동하기 위해 기본 스타일 제거 */
         .hud-top { position: absolute; top: auto; bottom: 240px; width: 100%; text-align: center; z-index: 20; pointer-events: none; }
-        
-        #sauce-progress-container {
-            position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-            width: 120px; height: 200px;
-            background-color: rgba(0, 0, 0, 0.5);
-            border: 3px solid #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            z-index: 20;
-        }
-        #sauce-progress-fill {
-            position: absolute; bottom: 0; left: 0;
-            width: 100%; height: 0%;
-            background: #c0392b;
-            transition: height 0.3s ease-out;
-        }
-
+        #sauce-progress-container { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 120px; height: 200px; background-color: rgba(0, 0, 0, 0.5); border: 3px solid #fff; border-radius: 10px; overflow: hidden; z-index: 20; }
+        #sauce-progress-fill { position: absolute; bottom: 0; left: 0; width: 100%; height: 0%; background: #c0392b; transition: height 0.3s ease-out; }
         .tomato { position: absolute; width: 90px; height: 90px; background: #ff6b6b; border-radius: 50%; border: 2px solid #000; box-shadow: 5px 5px 0px rgba(0,0,0,0.5); z-index: 5; }
         .tomato::after { content: ''; position: absolute; top: -5px; left: 50%; transform: translateX(-50%); width: 20px; height: 10px; background: #55efc4; border: 1px solid #000; z-index: 2; }
         .slash-trail { position: absolute; width: 10px; height: 10px; background-color: #fff; box-shadow: 0 0 5px #fff, 0 0 10px #ff00de; border-radius: 50%; pointer-events: none; z-index: 50; transform: translate(-50%, -50%); animation: fadeTrail 0.3s linear forwards; }
@@ -248,77 +218,26 @@
         @keyframes sliceRight { 0% { transform: translate(0, 0) rotate(0); opacity: 1; } 100% { transform: translate(50px, 100px) rotate(45deg); opacity: 0; } }
         .splat-effect { position: absolute; width: 150px; height: 150px; background: radial-gradient(circle, rgba(192, 57, 43, 0.8) 0%, transparent 70%); transform: translate(-50%, -50%); pointer-events: none; animation: fadeOut 0.5s forwards; }
         @keyframes fadeOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
+        .sauce-info-text { font-size: 2rem; color: #fdcb6e; font-weight: bold; text-shadow: 2px 2px 0 #000; display: block; margin-bottom: 5px; }
 
-        /* 2, 3, 파인애플 단계 */
-        #time-bar-container { position: absolute; top: 0; left: 0; width: 100%; height: 15px; background-color: rgba(0,0,0,0.5); z-index: 500; display: none; border-bottom: 2px solid #fff; }
-        #time-bar { width: 100%; height: 100%; background-color: #fdcb6e; transition: width 0.1s linear; }
-        
-        /* [수정] 소스 단계용 타이머/점수 스타일 (게이지 위) */
-        .sauce-info-text {
-            font-size: 2rem;
-            color: #fdcb6e;
-            font-weight: bold;
-            text-shadow: 2px 2px 0 #000;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* [수정] 디펜스 단계 타이머 (상단 고정) */
-        .timer-display {
-            position: fixed !important;
-            top: 30px !important; 
-            left: 50% !important;
-            transform: translateX(-50%) !important;
-            font-size: 3rem;
-            color: #fdcb6e;
-            font-weight: bold;
-            text-shadow: 2px 2px 0 #000;
-            z-index: 10;
-            display: block !important;
-        }
-
-        .oven-visual {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 400px;
-            margin-bottom: 30px;
-            position: relative;
-            z-index: 5;
-        }
-        
-        .common-pizza-frame {
+        /* 1.9단계 (토핑) */
+        .common-pizza-frame { 
             width: 500px; height: 500px; 
             max-width: 90vw; max-height: 55vh; 
             aspect-ratio: 1/1; 
-            position: relative; margin: 0 auto;
-            display: flex; justify-content: center; align-items: center;
-            /* [수정] 배경색 제거 (투명하게) */
-            /* background-color: rgba(0,0,0,0.5);  <- 제거됨 */
-            overflow: hidden;}
-
-        .common-pizza-img {
-            width: 100%; height: 100%; 
-            object-fit: cover; 
-            display: block;
+            position: relative; margin: 0 auto; 
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
         }
         
+        /* 2단계 (오븐) 레이아웃 */
+        #oven-pizza-wrapper {
+            width: 350px; height: 350px; 
+            margin-bottom: 5px; 
+        }
+
+        .common-pizza-img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .final-pizza-container { cursor: pointer; z-index: 10; }
-
-        .fire-overlay { position: absolute; top: -50px; left: -50px; right: -50px; bottom: -50px; background: radial-gradient(circle, rgba(255, 71, 87, 0.8) 0%, rgba(255,0,0,0) 70%); opacity: 0; pointer-events: none; mix-blend-mode: hard-light; transition: opacity 0.1s; }
-        .thermometer-container { width: 80%; max-width: 600px; height: 30px; background: #000; border: 2px solid #fff; border-radius: 5px; overflow: hidden; margin-bottom: 10px; }
-        .thermometer-bar { width: 0%; height: 100%; background: linear-gradient(to right, #ffeaa7, #ff7675); transition: width 0.1s linear; }
-        .temp-text { font-size: 1.5em; color: #fff; font-weight: bold; text-shadow: 0 0 10px #e67e22; }
-        .shake-hard { animation: shakeHard 0.2s; }
-        @keyframes shakeHard { 0% { transform: translate(0, 0) rotate(0deg); } 25% { transform: translate(-5px, 5px) rotate(-5deg); } 50% { transform: translate(5px, -5px) rotate(5deg); } 75% { transform: translate(-5px, -5px) rotate(-5deg); } 100% { transform: translate(0, 0) rotate(0deg); } }
-        .game-area {
-            width: 100vw; height: 100vh;
-            max-width: 600px; max-height: 700px;
-            margin: 0 auto;
-            display: flex; justify-content: center; align-items: center;
-        }
-        
+        .game-area { width: 100vw; height: 100vh; max-width: 600px; max-height: 700px; margin: 0 auto; display: flex; justify-content: center; align-items: center; }
         .target-zone { position: absolute; width: 50px; height: 50px; border: 2px dashed #fff; border-radius: 50%; transform: translate(-50%, -50%); animation: pulse 1s infinite; z-index: 5; }
         @keyframes pulse { 0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; } 50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; } }
         .t1 { top: 25%; left: 50%; } .t2 { top: 45%; left: 75%; } .t3 { top: 75%; left: 65%; } .t4 { top: 75%; left: 35%; } .t5 { top: 45%; left: 25%; }
@@ -326,7 +245,56 @@
         .pineapple { width: 60px; height: 60px; border-radius: 50%; background-image: url('pineappleslice.png'); background-size: cover; border: 2px solid #fff; cursor: grab; }
         .placed-pineapple { position: absolute; width: 60px; height: 60px; border-radius: 50%; background-image: url('pineappleslice.png'); background-size: cover; transform: translate(-50%, -50%); z-index: 15; animation: pop 0.3s ease-out; }
         @keyframes pop { 0% { transform: translate(-50%, -50%) scale(0); } 80% { transform: translate(-50%, -50%) scale(1.2); } 100% { transform: translate(-50%, -50%) scale(1); } }
-        .mint-choco { position: fixed; width: 180px; height: 180px; background-image: url('mintchoco.png'); background-size: contain; background-repeat: no-repeat; z-index: 100; pointer-events: none; }
+
+        /* 2단계 (오븐) */
+        .oven-visual { display: flex; justify-content: center; align-items: center; width: 100%; height: auto; margin-bottom: 20px; position: relative; z-index: 5; }
+        .fire-overlay { position: absolute; top: -50px; left: -50px; right: -50px; bottom: -50px; background: radial-gradient(circle, rgba(255, 71, 87, 0.8) 0%, rgba(255,0,0,0) 70%); opacity: 0; pointer-events: none; mix-blend-mode: hard-light; transition: opacity 0.1s; }
+        
+        .thermometer-container { 
+            position: relative; width: 80%; max-width: 600px; height: 40px; 
+            background: #222; border: 3px solid #fff; border-radius: 20px; 
+            overflow: hidden; margin: 10px auto; 
+        }
+        .thermometer-bar { 
+            position: absolute; top: 0; left: 0;
+            width: 0%; height: 100%; 
+            background: linear-gradient(to right, #ffeaa7, #ff7675); 
+            transition: width 0.1s linear; z-index: 2; opacity: 0.8;
+        }
+        #target-range-visual {
+            position: absolute; top: 0; left: 40%; width: 20%; height: 100%;
+            background-color: rgba(255, 215, 0, 0.3);
+            border-left: 3px dashed #ffd700; border-right: 3px dashed #ffd700;
+            z-index: 1; transition: left 0.5s ease-in-out;
+        }
+        .stability-wrapper { 
+            width: 80%; max-width: 600px; height: 20px; 
+            background: #000; border: 2px solid #fff; margin: 0 auto; 
+        }
+        #stability-bar { 
+            width: 100%; height: 100%; background: #00ff00; 
+            transition: width 0.2s, background-color 0.2s; 
+        }
+
+        .temp-text { font-size: 1.5em; color: #fff; font-weight: bold; text-shadow: 0 0 10px #e67e22; margin-top: 5px; }
+        
+        /* 3단계 (디펜스) & 기타 */
+        #time-bar-container { position: absolute; top: 0; left: 0; width: 100%; height: 15px; background-color: rgba(0,0,0,0.5); z-index: 500; display: none; border-bottom: 2px solid #fff; }
+        #time-bar { width: 100%; height: 100%; background-color: #fdcb6e; transition: width 0.1s linear; }
+        
+        .timer-display { 
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%); 
+            font-size: 3rem; color: #fdcb6e; font-weight: bold; text-shadow: 2px 2px 0 #000; 
+            z-index: 10; display: none; 
+        }
+        
+        .mint-choco { 
+            position: fixed; width: 180px; height: 180px; 
+            background-image: url('mintchoco.png'); 
+            border-radius: 50%;
+            background-size: contain; background-repeat: no-repeat; 
+            z-index: 100; pointer-events: none; 
+        }
         .cursor-shield { position: fixed; width: 100px; height: 100px; border: 3px solid #fff; background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 70%); border-radius: 50%; pointer-events: none; transform: translate(-50%, -50%); z-index: 200; display: none; mix-blend-mode: screen; box-shadow: 0 0 20px rgba(255,215,0,0.4); }
 
         .bitten { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 50%, 40% 40%, 50% 50%, 40% 60%, 0% 50%); animation: biteShake 0.2s ease-in-out; }
@@ -349,11 +317,10 @@
             animation: glowPulse 4s infinite alternate;
         }
         @keyframes glowPulse { from { opacity: 0.6; } to { opacity: 1; } }
-        /* 샤방샤방 효과 */
         .sparkle { position: absolute; width: 8px; height: 8px; background: white; border-radius: 50%; box-shadow: 0 0 10px #fff, 0 0 20px #ff00de; opacity: 0; animation: twinkle 2s infinite ease-in-out; pointer-events: none; }
         @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.5); } }
         .action-buttons { display: flex; gap: 15px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
-        #btn-download, #btn-share { margin-top: 10px; background-color: #FFD700; color: #111; border: none; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
+        #btn-share { margin-top: 10px; background-color: #FFD700; color: #111; border: none; box-shadow: 0 0 15px rgba(255, 215, 0, 0.3); }
         .secondary-btn { background-color: transparent !important; border: 2px solid #555 !important; color: #aaa !important; padding: 10px 20px !important; font-size: 0.9em !important; margin-top: 30px !important; }
         .secondary-btn:hover { border-color: #fff !important; color: #fff !important; background-color: rgba(255,255,255,0.1) !important; transform: scale(1.0) !important; box-shadow: none !important; }
         #pizza-transition { position: fixed; top: 50%; left: -50%; transform: translate(-50%, -50%); width: 300px; height: 300px; max-width: 80vw; max-height: 80vw; z-index: 1000; pointer-events: none; display: none; opacity: 0; }
@@ -362,7 +329,7 @@
         .slide-in { display: block !important; animation: slideInPizza 1.2s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
     </style>
 </head>
-<body>
+<body class="back-1">
     <audio id="bgm" loop>
         <source src="Risen - Density & Time.mp3" type="audio/mpeg">
     </audio>
@@ -385,6 +352,16 @@
 
     <div class="screen-overlay"></div>
     <div class="noise-overlay"></div>
+
+    <div id="tutorial-overlay">
+        <div class="tutorial-box">
+            <h2 class="tut-header" id="tut-title">STAGE 1</h2>
+            <div class="tut-content" id="tut-content">
+                설명 텍스트가 여기에 들어갑니다.
+            </div>
+            <button class="tut-btn" id="btn-tut-start">게임 시작</button>
+        </div>
+    </div>
 
     <div id="idol-status-window">
         <div class="status-header">
@@ -409,10 +386,8 @@
     <img src="pizza-angel.png" alt="천사" class="flying-character">
 
     <div id="pizza-transition">
-        <img src="pizza1.png" alt="피자">
+        <img src="pizza2.png" alt="피자">
     </div>
-
-    <div id="cursor-tooltip" style="display: none;"></div>
 
     <div id="intro" class="stage active">
         <h1 class="glitch" data-text="파인애플 피자 교단을 향하여">파인애플 피자 교단을 향하여</h1>
@@ -425,7 +400,6 @@
         <div class="vn-layer-common">
             <div class="vn-char-container">
                 <img src="leader.png" alt="교주" class="vn-char leader">
-                <img src="pizza-angel.png" alt="조수" class="vn-char guest" style="opacity: 0; display:none;">
             </div>
             <div class="vn-dialogue-box-common">
                 <div class="vn-name-tag-common">🍍 황금 혀의 교주</div>
@@ -446,8 +420,6 @@
                 <div class="next-indicator">▼</div>
             </div>
         </div>
-
-        
 
         <div id="idol-destruction-interface" style="display: none;">
             <h1 class="glitch" data-text="참회의 방">참회의 방</h1>
@@ -472,14 +444,15 @@
     </div>
 
     <div id="stage-dough" class="stage game-stage">
-        <h2>화면의 지시에 맞춰 방향키를 입력해<br>성스러운 도우를 반죽하세요!</h2>
-        <div class="rhythm-container">
-            <img id="key-display" src="point.png" alt="지시 방향" style="display: none;">
-            <div id="dough-visual"></div>
+        <h2>성스러운 방향을 따라 반죽하십시오!<br>(20회 입력 / 실수 허용 3회)</h2>
+        <div class="life-container" id="dough-life">❤️❤️❤️</div>
+        <div class="rhythm-container" style="position:relative; margin-top:30px;">
+            <img id="key-display" src="point.png" alt="지시 방향" style="width:120px; filter:drop-shadow(0 0 10px #fff);">
+            <div id="dough-visual" style="width:180px; height:180px; background:#ffeaa7; border-radius:50%; border:4px solid #fff; margin:20px auto;"></div>
         </div>
-        <div class="progress-wrapper">
-            <div class="progress-bar-bg">
-                <div id="dough-progress" class="progress-bar-fill"></div>
+        <div class="progress-wrapper" style="width:300px; margin-top:20px;">
+            <div class="progress-bar-bg" style="width:100%; height:20px; border:2px solid #fff; background:#000;">
+                <div id="dough-progress" style="width:0%; height:100%; background:#ff00de; transition:width 0.2s;"></div>
             </div>
             <p id="dough-status-text">반죽 완성도: 0%</p>
         </div>
@@ -519,32 +492,27 @@
     </div>
 
     <div id="stage-2" class="stage game-stage">
-        <h2>스페이스바를 연타하여<br>온도를 높여 피자를 완성하세요!</h2>
-        <div class="oven-visual">
-            <div class="common-pizza-frame" id="oven-pizza-wrapper">
-                <img src="pizza1.png" class="common-pizza-img">
-                <div class="fire-overlay"></div>
-            </div>
+        <h2>스페이스바로 열기를 주입하여<br>노란색 목표 온도를 유지하십시오!</h2>
+        <div id="oven-timer" style="font-size: 3em; color: #fdcb6e; margin-bottom: 10px;">20.00</div>
+        
+        <div class="common-pizza-frame" id="oven-pizza-wrapper">
+            <img src="pizza2.png" class="common-pizza-img">
+            <div class="fire-overlay"></div>
         </div>
+
+        <p>피자 안정도 (범위를 벗어나면 감소)</p>
+        <div class="stability-wrapper"><div id="stability-bar"></div></div>
+        
         <div class="thermometer-container">
-            <div class="thermometer-bar" id="temp-bar"></div>
-        </div>
-        <div class="temp-text">현재 온도: <span id="temp-display">0</span>℃ / 400℃</div>
+            <div id="target-range-visual"></div> <div class="thermometer-bar" id="temp-bar"></div> </div>
+        <div class="temp-text" style="font-size:1.5em;">현재 온도: <span id="temp-display">0</span>℃</div>
     </div>
 
     <div id="stage-3" class="stage game-stage">
-        <div id="time-bar-container"><div id="time-bar"></div></div>
-        
-        <h2 id="game-title">민트초코로부터 15초간 피자를 사수하세요!</h2>
-        
-        <div class="timer-display" id="timer">15.00</div>
-        
-        <div class="game-area">
-            <div class="common-pizza-frame">
-                <img src="pizza1.png" class="common-pizza-img" id="pizza-defense">
-            </div>
+        <h2>민트초코의 습격!</h2>
+        <div class="common-pizza-frame" id="defense-pizza-wrapper" style="margin-top:20px;">
+            <img src="pizza2.png" class="common-pizza-img">
         </div>
-        <div class="cursor-shield" id="shield"></div>
     </div>
 
     <div id="stage-ritual" class="stage game-stage">
@@ -553,7 +521,7 @@
         <h2>의식이 끝났습니다.<br>이제 성스러운 파인애플 피자를 영접하십시오.</h2>
         
         <div class="common-pizza-frame final-pizza-container" id="final-pizza">
-            <img src="pizza1.png" alt="완성된 피자" class="common-pizza-img">
+            <img src="pizza2.png" alt="완성된 피자" class="common-pizza-img">
         </div>
 
         <p class="blink-text">피자를 클릭하여 '진리'를 맛보세요</p>
@@ -573,38 +541,51 @@
             <h2 id="new-cult-name" style="color:#FFD700; margin:20px 0;">...</h2>
         </div>
         <div class="action-buttons">
-            <button id="btn-download">🍕 성스러운 피자 받기</button>
             <button id="btn-share">🔗 교단 링크 전파하기</button>
         </div>
         <button id="btn-restart-game" class="secondary-btn">처음으로 돌아가기</button>
     </div>
 
     <div id="white-flash"></div>
+
+    <div id="shield" class="cursor-shield"></div>
+    <div id="timer" class="timer-display" style="display:none;">15.00</div>
+    
+    <div id="time-bar-container"><div id="time-bar"></div></div>
+
     <script>
         // --- 전역 데이터 ---
         const idolData = {
-            "페퍼로니": {
-                desc: "짜고 기름진 붉은 원반. 단맛이라곤 찾아볼 수 없는 야만적인 고기 조각.",
-                impurity: 85
-            },
-            "콤비네이션": {
-                desc: "이도 저도 아닌 혼란의 덩어리. 정체성 없이 뒤섞인 잡탕의 표본.",
-                impurity: 92
-            },
-            "치즈": {
-                desc: "느끼함의 결정체. 과일의 상큼함을 거부하는 끈적하고 오만한 지방 덩어리.",
-                impurity: 78
-            }
+            "페퍼로니": { desc: "짜고 기름진 붉은 원반. 단맛이라곤 찾아볼 수 없는 야만적인 고기 조각.", impurity: 85 },
+            "콤비네이션": { desc: "이도 저도 아닌 혼란의 덩어리. 정체성 없이 뒤섞인 잡탕의 표본.", impurity: 92 },
+            "치즈": { desc: "느끼함의 결정체. 과일의 상큼함을 거부하는 끈적하고 오만한 지방 덩어리.", impurity: 78 }
+        };
+
+        const tutorialInfo = {
+            'dough': { title: "1. 신성한 반죽", desc: "화면에 나타나는 화살표 방향을 보고<br>키보드의 방향키를 정확하게 누르세요.<br>20번 성공하면 통과입니다!" },
+            'sauce': { title: "2. 붉은 세례", desc: "마우스를 휘둘러 날아오는 토마토를<br>베어버리세요!<br>15개를 모으면 성공입니다." },
+            'topping': { title: "3. 황금의 안착", desc: "파인애플 조각을 마우스로 드래그하여<br>피자 위의 점선 위치에 정확히 놓으세요." },
+            'oven': { title: "4. 시련의 불꽃", desc: "스페이스바를 눌러 온도를 높이고,<br>떼어서 온도를 낮추세요.<br>노란색 목표 구간을 유지해야 합니다!" },
+            'defense': { title: "5. 이단의 습격", desc: "마우스 커서가 강력한 방패가 됩니다.<br>달려드는 민트초코들을 쳐내서<br>15초 동안 피자를 지키세요!" }
         };
 
         // --- 전역 변수 ---
         const stages = document.querySelectorAll('.stage');
-        let gameLoopId, timerInterval, ovenLoopId, sauceInterval, lastTime;
+        let gameLoopId, timerInterval, ovenLoopId, sauceInterval, lastTime = 0; 
+        
+        // 3단계 전용 변수
+        let defenseInterval; 
+        let mouseX = 0, mouseY = 0;
+        let enemies = [], spawnRate = 0.5, spawnTimer = 0, survivalTime = 15;
+        const MAX_SURVIVAL_TIME = 15;
 
         // --- 유틸리티 ---
         function showStage(stageId) {
-            stages.forEach(stage => stage.classList.remove('active'));
-            document.getElementById(stageId).classList.add('active');
+            const targetStage = document.getElementById(stageId);
+            if (!targetStage) return;
+
+            document.querySelectorAll('.stage').forEach(stage => stage.classList.remove('active'));
+            targetStage.classList.add('active');
 
             if (stageId === 'stage-2') document.body.className = 'back-oven';
             else if (stageId === 'stage-3') document.body.className = 'back-2';
@@ -612,105 +593,90 @@
             else document.body.className = 'back-1';
         }
 
+        // 공통 게임 실패 처리 함수
+        function failGame(reason) {
+            document.getElementById('game-over').classList.add('active');
+            document.getElementById('fail-reason').innerText = reason;
+            document.getElementById('btn-retry').onclick = () => location.reload();
+        }
+
+        // --- 튜토리얼 기능 ---
+        function openTutorial(key, callback) {
+            const info = tutorialInfo[key];
+            const overlay = document.getElementById('tutorial-overlay');
+            const titleEl = document.getElementById('tut-title');
+            const contentEl = document.getElementById('tut-content');
+            const btn = document.getElementById('btn-tut-start');
+
+            titleEl.innerText = info.title;
+            contentEl.innerHTML = info.desc;
+            
+            overlay.style.display = 'flex'; // 보이기
+
+            // 버튼 원타임 클릭 이벤트
+            btn.onclick = () => {
+                overlay.style.display = 'none'; // 숨기기
+                if (callback) callback();
+            };
+        }
+
         // --- 초기화 ---
         document.addEventListener('DOMContentLoaded', () => initIntro());
 
         function initIntro() {
-            // 스크롤 강제 차단
             document.body.style.overflow = 'hidden';
             showStage('intro');
-           document.getElementById('btn-start-ritual').onclick = () => {
-    // BGM 재생 코드 시작
-    const bgm = document.getElementById('bgm');
-    bgm.volume = 0.1; // [수정됨] BGM 볼륨을 0.3에서 0.1로 낮춤 (효과음을 더 잘 들리게 하기 위함)
-    bgm.play().catch(e => console.log("재생 실패:", e));
-    // BGM 재생 코드 끝
+            document.getElementById('btn-start-ritual').onclick = () => {
+                const bgm = document.getElementById('bgm');
+                bgm.volume = 0.1; 
+                bgm.play().catch(e => console.log("재생 실패:", e));
+                showStage('stage-1');
+                initStage1(); 
+            };
+        }
 
-    showStage('stage-1');
-    initStage1(); 
-}};
-
-// --- 브릿지 대사 ---
+        // --- 브릿지 대사 ---
         const bridge1Data = [
             "크흐흐... 들리십니까? 위선의 우상들이 산산조각 나는 소리가...", 
-            "당신은 첫 번째 시련을 통과했습니다.", 
-            "하지만 진정한 여정은 이제부터입니다.",
-            "수천 년 동안 인류는 잘못된 토핑의 노예로 살아왔습니다.",
-            "페퍼로니의 기름진 거짓말, 콤비네이션의 혼란스러운 유혹...",
-            "이제 당신의 손으로 '진리의 반죽'을 빚을 시간입니다.",
-            "손가락이 가리키는 성스러운 방향을 따르세요.",
-            "각 움직임에는 깨달음이 담겨 있습니다."
+            "당신의 손에서 일어난 파괴... 그것은 단순한 물리적 행위가 아닙니다.",
+            "당신은 스스로의 과거를, 거짓된 신념을 깨뜨린 것입니다.",
+            "이제 진정한 여정이 시작됩니다.",
+            "손가락이 가리키는 성스러운 방향을 따르세요. 의심은 반죽을 망칩니다."
         ];
-        
         const bridgeSauceData = [
             "...완벽합니다.", 
-            "당신의 손에서 만들어진 이 반죽에는...",
-            "수백 명의 신도들이 평생 찾지 못한 '균형'이 깃들어 있습니다.",
-            "하지만 반죽만으로는 부족합니다.",
-            "전설에 따르면, 최초의 파인애플 피자는...",
-            "자발적으로 헌신한 토마토들의 붉은 눈물로 만들어졌다고 합니다.",
-            "당신도 그 의식을 재현해야 합니다.",
-            "떨어지는 토마토들... 그들은 단순한 재료가 아닙니다.",
-            "각자가 '구원받고 싶다'는 소망으로 하늘에서 내려오는 것입니다.",
-            "당신의 손으로 그들의 소망을 이루어주십시오."
+            "당신의 손에서 만들어진 이 반죽에는 균형이 깃들어 있습니다.",
+            "이제 하늘에서 내리는 붉은 은총을 받을 시간입니다.",
+            "떨어지는 토마토들을 하나도 놓치지 말고 베어내십시오."
         ];
-        
         const bridgeToppingData = [
             "...잠시만요. 이 향기...", 
-            "제가 50년간 교단을 이끌면서도 맡아보지 못한 완벽한 소스의 향입니다.",
-            "당신에게는... 특별한 무언가가 있군요.",
-            "어쩌면 예언에서 말하던 '황금 혀의 선택받은 자'가...",
-            "하지만 아직 확신할 수 없습니다.",
-            "마지막 시험이 남았습니다.",
+            "토마토들이 당신을 선택했습니다.",
+            "하지만 가장 위험한 시험이 남았습니다.",
             "파인애플... 논쟁의 중심에 선 과일.",
-            "어떤 이들은 이를 '신성모독'이라 부르고,",
-            "또 다른 이들은 '계시'라고 부릅니다.",
-            "이 다섯 조각을 정확한 위치에 놓으십시오.",
-            "한 조각이라도 어긋나면... 모든 것이 무너집니다."
+            "이 다섯 조각을 정확한 위치에 놓으십시오."
         ];
-        
         const bridgeOvenData = [
-            "...믿을 수가 없습니다.", 
-            "완벽한 오각형의 균형...",
-            "이것은 1985년, 창시자가 처음 계시를 받았을 때의 배치와 정확히 일치합니다!",
-            "당신은 진짜입니다. 예언된 그 사람...",
-            "하지만 아직 끝이 아닙니다.",
-            "가장 위험한 순간이 다가옵니다.",
-            "400도... 신과 악마가 만나는 온도입니다.",
-            "이 불길 속에서 피자는 두 가지 운명 중 하나를 맞이합니다.",
-            "영원한 완성, 혹은 영원한 재가 되는 것.",
-            "당신의 신념만이 그 결과를 결정합니다."
+            "...믿을 수가 없습니다. 완벽한 오각형의 균형...",
+            "이제 가장 뜨거운 시련이 다가옵니다.",
+            "오븐의 온도를 일정하게 유지해야 합니다.",
+            "스페이스바를 눌러 열기를 주입하고, 놓아서 식히십시오.",
+            "신이 지정한 노란색 온도 구간을 벗어나지 마십시오!"
         ];
-        
         const bridgeDefenseData = [
             "오오... 이 황금빛 광채를...", 
             "파인애플이 완벽하게 캐러멜화되었습니다!",
-            "당신은 해냈습니다. 전설의 피자를 완성한 것입니다!",
-            "이제 영원한 구원이 약속된...",
             "...?!",
             "...안 됩니다. 이 냄새는...",
             "민트초코... 저주받은 반대 교단의 악취!",
-            "그들이 감지했습니다! 완벽한 피자의 탄생을!",
-            "그들은 질투합니다. 조화를 이루는 모든 것을.",
-            "민트와 초콜릿... 결코 만나서는 안 될 두 존재의 금단의 결합.",
-            "그들은 당신의 피자를 타락시키려 합니다!",
-            "15초... 그들의 공격이 끝날 때까지",
-            "당신의 피자를 지켜내십시오!"
+            "그들이 당신의 피자를 타락시키려 합니다!",
+            "마우스로 결계를 쳐서 그들을 막아내십시오!"
         ];
-        
         const bridgeRitualData = [
             "...기적입니다.", 
             "민트초코의 저주를 물리쳤습니다...",
-            "50년 교단 역사상 이런 일은 처음입니다.",
-            "당신 앞에 놓인 이 피자를 보십시오.",
-            "완벽한 황금빛 갈색. 녹아내린 치즈의 실. 캐러멜화된 파인애플.",
-            "이것은 더 이상 음식이 아닙니다.",
-            "이것은 '계시'입니다.",
-            "수천 명이 평생 찾아 헤매도 보지 못하는 진리의 현현(顯現).",
             "이제... 마지막 의식만이 남았습니다.",
-            "입을 벌리고, 이 진리를 받아들이십시오.",
-            "한 입을 베어물 때, 당신은 더 이상 예전의 당신이 아닙니다.",
-            "당신은 '깨달은 자'가 됩니다."
+            "입을 벌리고, 이 진리를 받아들이십시오."
         ];
 
         let interludeIndex = 0, interludeCallback = null, interludeTexts = [], isInterludeTyping = false, interludeTimeout;
@@ -736,7 +702,13 @@
         }
 
         // --- 1단계: 참회 ---
-        const dialogueData = ["어서 오십시오, 길을 잃은 어린 양이여.", "그대의 혀는... 거짓된 맛에 속아왔군요.", "이제 파인애플 피자를 통해 진정한 맛의 길로 인도될 것입니다.", "저 역겨운 우상들을 그대의 손으로 직접 파괴하십시오!"];
+        const dialogueData = [
+            "어서 오십시오, 길을 잃은 어린 양이여.", 
+            "이곳까지 오는 것도... 쉽지 않았을 겁니다.",
+            "저 역겨운 우상들을 보십시오.",
+            "그대의 손으로 직접 파괴하십시오!",
+            "그것이 첫 번째 시련입니다."
+        ];
         let currentDialogueIndex = 0, isTyping = false, typingTimeout;
 
         function initStage1() {
@@ -762,104 +734,96 @@
             const idols = document.querySelectorAll('.idol-wrapper');
             const nextBtn = document.getElementById('btn-to-next-1');
             const statusWindow = document.getElementById('idol-status-window');
-            
             if (!statusWindow) return;
-
             let destroyedCount = 0;
 
             idols.forEach(idol => {
                 const newIdol = idol.cloneNode(true);
                 idol.parentNode.replaceChild(newIdol, idol);
-                
-                const showStatus = () => {
-                    if (newIdol.classList.contains('destroyed')) {
-                        statusWindow.style.display = 'none';
-                        return;
-                    }
-                    const name = newIdol.dataset.name;
-                    const data = idolData[name];
-                    
+                newIdol.addEventListener('mouseenter', () => {
+                    if (newIdol.classList.contains('destroyed')) { statusWindow.style.display = 'none'; return; }
+                    const name = newIdol.dataset.name; const data = idolData[name];
                     if (data) {
                         document.getElementById('status-name-text').innerText = name;
                         document.getElementById('status-desc-text').innerText = data.desc;
                         document.getElementById('status-impurity-bar').style.width = data.impurity + '%';
                         statusWindow.style.display = 'block';
                     }
-                };
-
-                newIdol.addEventListener('mouseenter', showStatus);
-                
+                });
                 newIdol.addEventListener('mousemove', (e) => {
                     if (newIdol.classList.contains('destroyed')) return;
-                    statusWindow.style.left = (e.clientX + 20) + 'px';
-                    statusWindow.style.top = (e.clientY + 20) + 'px';
+                    statusWindow.style.left = (e.clientX + 20) + 'px'; statusWindow.style.top = (e.clientY + 20) + 'px';
                 });
-
-                newIdol.addEventListener('mouseleave', () => {
-                    statusWindow.style.display = 'none';
-                });
-
+                newIdol.addEventListener('mouseleave', () => statusWindow.style.display = 'none');
                 newIdol.addEventListener('click', () => {
                     statusWindow.style.display = 'none';
                     if (!newIdol.classList.contains('destroyed')) {
-                        // [수정됨] 효과음 재생 코드 (이전 단계에서 추가됨)
                         const shatterSfx = document.getElementById('sfx-shatter');
-                        if (shatterSfx) {
-                            shatterSfx.currentTime = 0; 
-                            shatterSfx.play().catch(e => console.log('Sound error', e));
-                        }
-
-                        newIdol.classList.add('destroyed');
-                        destroyedCount++;
+                        if (shatterSfx) { shatterSfx.currentTime = 0; shatterSfx.play().catch(e => console.log(e)); }
+                        newIdol.classList.add('destroyed'); destroyedCount++;
                         document.getElementById('idol-feedback').textContent = `'${newIdol.dataset.name}' 파괴됨.`;
                         if (destroyedCount === idols.length) nextBtn.disabled = false;
                     }
                 });
             });
-            
+            // [수정] 튜토리얼 연결
             nextBtn.onclick = () => { 
-                playInterlude(bridge1Data, () => { 
-                    showStage('stage-dough'); 
-                    initStageDough(); 
+                playInterlude(bridge1Data, () => {
+                    openTutorial('dough', () => {
+                        showStage('stage-dough'); 
+                        initStageDough(); 
+                    });
                 }); 
             };
         }
 
-        // --- 1.5단계: 도우 반죽 ---
-        let doughScore = 0; const DOUGH_GOAL = 10; let currentKey = '';
+        // --- 1.5단계: 반죽 ---
+        let doughScore = 0, doughMistakes = 0;
         const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-        const keyRotations = { 'ArrowUp': '0deg', 'ArrowDown': '180deg', 'ArrowLeft': '-90deg', 'ArrowRight': '90deg' };
+        let currentDoughKey = '';
 
         function initStageDough() {
-            doughScore = 0; updateDoughUI(); setNewDoughKey();
-            window.addEventListener('keydown', handleDoughKey);
+            doughScore = 0; doughMistakes = 0; updateDoughUI();
+            setNewDoughKey();
+            window.onkeydown = (e) => {
+                if(!keys.includes(e.code)) return;
+                const visual = document.getElementById('dough-visual');
+                if(e.code === currentDoughKey) {
+                    doughScore++;
+                    document.getElementById('sfx-knead').currentTime = 0; document.getElementById('sfx-knead').play();
+                    visual.style.transform = 'scale(1.2, 0.8)'; setTimeout(()=>visual.style.transform='scale(1)', 100);
+                    if(doughScore >= 20) {
+                        window.onkeydown = null;
+                        // [수정] 튜토리얼 연결
+                        playInterlude(bridgeSauceData, () => {
+                            openTutorial('sauce', () => {
+                                showStage('stage-sauce'); 
+                                initStageSauce();
+                            });
+                        });
+                    } else { setNewDoughKey(); }
+                } else {
+                    doughMistakes++;
+                    visual.style.background = '#ff7675'; setTimeout(()=>visual.style.background='#ffeaa7', 200);
+                    if(doughMistakes >= 3) {
+                        window.onkeydown = null;
+                        failGame("반죽의 결을 망쳤습니다. (실수 3회 초과)");
+                    }
+                }
+                updateDoughUI();
+            };
         }
         function setNewDoughKey() {
-            currentKey = keys[Math.floor(Math.random() * keys.length)];
-            const display = document.getElementById('key-display');
-            display.style.display = 'block'; display.style.transform = `rotate(${keyRotations[currentKey]})`;
-            display.style.animation = 'none'; display.offsetHeight; display.style.animation = 'pulseKey 0.5s infinite alternate';
+            currentDoughKey = keys[Math.floor(Math.random()*4)];
+            const keyEl = document.getElementById('key-display');
+            const rots = {'ArrowUp':0, 'ArrowDown':180, 'ArrowLeft':-90, 'ArrowRight':90};
+            keyEl.style.transform = `rotate(${rots[currentDoughKey]}deg)`;
         }
-        function handleDoughKey(e) {
-            const dough = document.getElementById('dough-visual');
-            if (e.code === currentKey) {
-                // [추가된 부분] 반죽 소리 재생 (볼륨 1.0 강제 설정)
-                const kneadSfx = document.getElementById('sfx-knead');
-                if (kneadSfx) {
-                    kneadSfx.volume = 1.0; // 볼륨을 최대(1.0)로 설정
-                    kneadSfx.currentTime = 0;
-                    kneadSfx.play().catch(err => console.log(err));
-                }
-
-                doughScore++; dough.classList.remove('dough-squish'); void dough.offsetWidth; dough.classList.add('dough-squish');
-                if (doughScore >= DOUGH_GOAL) { doughScore = DOUGH_GOAL; updateDoughUI(); completeDoughStage(); } else { updateDoughUI(); setNewDoughKey(); }
-            } else if (keys.includes(e.code)) { dough.classList.remove('dough-shake'); void dough.offsetWidth; dough.classList.add('dough-shake'); }
-        }
-        function updateDoughUI() { document.getElementById('dough-progress').style.width = (doughScore/DOUGH_GOAL*100) + '%'; document.getElementById('dough-status-text').textContent = `반죽 완성도: ${Math.floor(doughScore/DOUGH_GOAL*100)}%`; }
-        function completeDoughStage() {
-            window.removeEventListener('keydown', handleDoughKey); document.getElementById('key-display').style.display = 'none';
-            document.querySelector('.rhythm-container').innerHTML += '<h2 style="color:#FFD700; z-index:20;">완성!</h2>';
-            setTimeout(() => { playInterlude(bridgeSauceData, () => { showStage('stage-sauce'); initStageSauce(); }); }, 1000);
+        function updateDoughUI() {
+            document.getElementById('dough-progress').style.width = (doughScore/20*100)+'%';
+            document.getElementById('dough-status-text').innerText = `반죽 완성도: ${Math.floor(doughScore/20*100)}%`;
+            const hearts = '❤️'.repeat(3 - doughMistakes) + '🖤'.repeat(doughMistakes);
+            document.getElementById('dough-life').innerText = hearts;
         }
 
         // --- 1.8단계: 토마토 닌자 ---
@@ -885,7 +849,7 @@
             initSlashEffect();
             sauceInterval = setInterval(() => {
                 sauceTimeLeft -= 0.1; document.getElementById('sauce-timer').textContent = sauceTimeLeft.toFixed(2);
-                if (sauceTimeLeft <= 0) { cleanupSauceStage(); if (sauceScore >= SAUCE_GOAL) successSauceStage(); else failSauceStage(); }
+                if (sauceTimeLeft <= 0) { cleanupSauceStage(); if (sauceScore >= SAUCE_GOAL) successSauceStage(); else failGame("토마토 소스가 부족합니다."); }
             }, 100);
             gameLoopId = requestAnimationFrame(tomatoGameLoop); spawnTomato();
         }
@@ -908,18 +872,12 @@
             spawnIntervalId = setTimeout(spawnTomato, Math.random() * 200 + 200); 
         }
         function handleSlice(t) {
-            // [추가된 부분] 배트 소리 재생
             const batSfx = document.getElementById('sfx-bat');
-            if (batSfx) {
-                batSfx.currentTime = 0;
-                batSfx.play().catch(e => console.log(e));
-            }
-
+            if (batSfx) { batSfx.currentTime = 0; batSfx.play().catch(e => console.log(e)); }
             t.sliced = true; sauceScore++; 
             const progress = (sauceScore / SAUCE_GOAL) * 100;
             document.getElementById('sauce-progress-fill').style.height = `${progress}%`;
             document.getElementById('sauce-score').textContent = 'Score: ' + sauceScore + '/' + SAUCE_GOAL;
-            
             t.el.style.background = 'none'; t.el.style.boxShadow = 'none';
             t.el.innerHTML = '<div class="tomato-slice-left"></div><div class="tomato-slice-right"></div>';
             const splat = document.createElement('div'); splat.className = 'splat-effect';
@@ -938,11 +896,16 @@
         }
         function successSauceStage() {
             document.getElementById('sauce-game-area').innerHTML = ''; const transitionEl = document.getElementById('pizza-transition'); transitionEl.classList.add('slide-in');
-            setTimeout(() => { transitionEl.classList.remove('slide-in'); playInterlude(bridgeToppingData, () => { showStage('stage-topping'); initStageTopping(); }); }, 1200);
-        }
-        function failSauceStage() {
-            document.getElementById('game-over').classList.add('active'); document.getElementById('fail-reason').innerText = `토마토 소스 부족... (${sauceScore}/${SAUCE_GOAL})`;
-            document.getElementById('btn-retry').onclick = () => { document.getElementById('game-over').classList.remove('active'); showStage('stage-sauce'); initStageSauce(); };
+            setTimeout(() => { 
+                transitionEl.classList.remove('slide-in'); 
+                // [수정] 튜토리얼 연결
+                playInterlude(bridgeToppingData, () => { 
+                    openTutorial('topping', () => {
+                        showStage('stage-topping'); 
+                        initStageTopping(); 
+                    });
+                }); 
+            }, 1200);
         }
 
         // --- 1.9단계: 파인애플 토핑 ---
@@ -952,7 +915,6 @@
             const dock = document.getElementById('dock'); const newDock = dock.cloneNode(true); dock.parentNode.replaceChild(newDock, dock);
             document.querySelectorAll('.placed-pineapple').forEach(el => el.remove());
             document.querySelectorAll('.target-zone').forEach(t => { t.style.display = 'block'; t.innerHTML = ''; });
-            
             document.querySelectorAll('.pineapple').forEach(p => {
                 p.style.display = 'block'; p.style.opacity = '1';
                 p.addEventListener('dragstart', (e) => { e.dataTransfer.setData('text', e.target.id); setTimeout(() => p.style.opacity = '0.5', 0); });
@@ -972,152 +934,263 @@
                 });
             });
         }
-        function completeToppingStage() { playInterlude(bridgeOvenData, () => { showStage('stage-2'); initStage2(); }); }
-
-        // --- 2단계: 오븐 ---
-        let currentTemp = 0; const MAX_TEMP = 400; let decayRate = 0.3; let increaseAmount = 30;
-        function initStage2() { 
-            // [추가된 부분] 화로 소리 재생
-            const bonfireBgm = document.getElementById('bgm-bonfire');
-            if (bonfireBgm) {
-                bonfireBgm.volume = 0.5; // 소리 크기 조절
-                bonfireBgm.play().catch(e => console.log(e));
-            }
-
-            currentTemp = 0; updateOvenUI(); window.addEventListener('keyup', handleSpaceKey); ovenLoopId = requestAnimationFrame(ovenLoop); 
+        function completeToppingStage() { 
+            // [수정] 튜토리얼 연결
+            playInterlude(bridgeOvenData, () => { 
+                openTutorial('oven', () => {
+                    showStage('stage-2'); 
+                    initStage2(); 
+                });
+            }); 
         }
-        function handleSpaceKey(e) {
-            if (e.code === 'Space') {
-                currentTemp += increaseAmount; 
-                const pizzaWrapper = document.getElementById('oven-pizza-wrapper');
-                pizzaWrapper.classList.remove('shake-hard'); void pizzaWrapper.offsetWidth; pizzaWrapper.classList.add('shake-hard');
-                if (currentTemp >= MAX_TEMP) { currentTemp = MAX_TEMP; updateOvenUI(); ovenClear(); return; }
+
+        // --- 2단계: 오븐 (온도 유지 미니게임으로 수정됨) ---
+        let ovenTime = 20; 
+        let stability = 100; // 안정도
+        let currentTemp = 100; // 유저 온도 (0 ~ 400)
+        let targetTempCenter = 200; // 목표 온도 중심 (계속 바뀜)
+        const RANGE_WIDTH = 90; // [수정] 목표 온도 범위 너비 확대 (70 -> 90)
+        
+        let isSpacePressed = false;
+
+        function initStage2() {
+            ovenTime = 20; 
+            stability = 100; 
+            currentTemp = 100;
+            targetTempCenter = 200;
+            isSpacePressed = false;
+            
+            document.getElementById('bgm-bonfire').play();
+
+            window.onkeydown = (e) => { if(e.code === 'Space') isSpacePressed = true; };
+            window.onkeyup = (e) => { if(e.code === 'Space') isSpacePressed = false; };
+
+            targetInterval = setInterval(() => {
+                targetTempCenter = 100 + Math.random() * 200;
+                updateTargetVisual();
+            }, 3000);
+
+            ovenInterval = setInterval(() => {
+                ovenTime -= 0.1;
+                if(isSpacePressed) {
+                    currentTemp += 6; 
+                    const pizza = document.getElementById('oven-pizza-wrapper');
+                    pizza.style.transform = `scale(${1 + Math.random()*0.02})`; 
+                } else {
+                    currentTemp -= 1.0; 
+                }
+                
+                if(currentTemp < 0) currentTemp = 0;
+                if(currentTemp > 400) currentTemp = 400;
+
+                const diff = Math.abs(currentTemp - targetTempCenter);
+                const allowedDiff = RANGE_WIDTH / 2; 
+
+                if(diff <= allowedDiff) {
+                    stability = Math.min(100, stability + 0.8);
+                } else {
+                    stability -= 0.5; 
+                }
+
                 updateOvenUI();
-            }
-        }
-        function ovenLoop() { if (currentTemp > 0) { currentTemp -= decayRate; if (currentTemp < 0) currentTemp = 0; } updateOvenUI(); if (currentTemp >= 400) { ovenClear(); return; } ovenLoopId = requestAnimationFrame(ovenLoop); }
-        function updateOvenUI() { document.getElementById('temp-display').innerText = Math.floor(currentTemp); document.getElementById('temp-bar').style.width = (currentTemp/MAX_TEMP*100) + '%'; document.querySelector('.fire-overlay').style.opacity = currentTemp/400; }
-        function ovenClear() { 
-            // [추가된 부분] 화로 소리 멈춤
-            const bonfireBgm = document.getElementById('bgm-bonfire');
-            if (bonfireBgm) {
-                bonfireBgm.pause();
-                bonfireBgm.currentTime = 0;
-            }
 
-            cancelAnimationFrame(ovenLoopId); window.removeEventListener('keyup', handleSpaceKey); playInterlude(bridgeDefenseData, () => { showStage('stage-3'); initStage3(); }); 
+                if(stability <= 0) endGameOven(false);
+                if(ovenTime <= 0 && stability > 0) endGameOven(true);
+
+            }, 50);
+
+            updateTargetVisual();
         }
 
-        // --- 3단계: 피자 수호 (Delta Time + 마우스 쉴드) ---
-        let enemies = [], spawnRate = 0.5, spawnTimer = 0, survivalTime = 15;
-        const MAX_SURVIVAL_TIME = 15; let mouseX = 0, mouseY = 0;
+        function updateTargetVisual() {
+            const visual = document.getElementById('target-range-visual');
+            const leftP = ((targetTempCenter - (RANGE_WIDTH/2)) / 400) * 100;
+            const widthP = (RANGE_WIDTH / 400) * 100;
+            visual.style.left = leftP + '%';
+            visual.style.width = widthP + '%';
+        }
 
+        function updateOvenUI() {
+            document.getElementById('oven-timer').innerText = Math.max(0, ovenTime).toFixed(2);
+            document.getElementById('temp-display').innerText = Math.floor(currentTemp);
+            document.getElementById('temp-bar').style.width = (currentTemp/400*100) + '%';
+            const stabBar = document.getElementById('stability-bar');
+            stabBar.style.width = stability + '%';
+            if(stability < 30) stabBar.style.background = '#ff0000';
+            else if(stability < 60) stabBar.style.background = '#ffff00';
+            else stabBar.style.background = '#00ff00';
+            document.querySelector('.fire-overlay').style.opacity = (currentTemp/400) * 0.8;
+            if(!isSpacePressed) document.getElementById('oven-pizza-wrapper').style.transform = 'scale(1)';
+        }
+
+        function endGameOven(success) {
+            clearInterval(ovenInterval); clearInterval(targetInterval);
+            window.onkeydown = null; window.onkeyup = null;
+            document.getElementById('bgm-bonfire').pause();
+            if(success) {
+                // [수정] 튜토리얼 연결
+                playInterlude(bridgeDefenseData, () => { 
+                    openTutorial('defense', () => {
+                        showStage('stage-3'); 
+                        initStage3(); 
+                    });
+                });
+            } else failGame("온도 조절 실패. 피자가 타버렸거나 덜 익었습니다.");
+        }
+
+        // --- 3단계: 피자 수호 (수정됨: 멈춤 현상 완벽 해결) ---
+        
         class MintChoco {
             constructor() {
                 this.el = document.createElement('div'); this.el.className = 'mint-choco';
                 document.body.appendChild(this.el);
-                const edge = Math.floor(Math.random() * 4);
-                if(edge===0){this.x=Math.random()*window.innerWidth;this.y=-300;}
-                else if(edge===1){this.x=window.innerWidth+300;this.y=Math.random()*window.innerHeight;}
-                else if(edge===2){this.x=Math.random()*window.innerWidth;this.y=window.innerHeight+300;}
-                else{this.x=-300;this.y=Math.random()*window.innerHeight;}
-                this.size = 180; 
-                this.speed = 200 + Math.random() * 150; // 초당 픽셀 속도 (DeltaTime용)
-                this.vx = 0; this.vy = 0; this.isRepelled = false;
                 
-                const pCx = window.innerWidth / 2; const pCy = window.innerHeight / 2;
-                const myCx = this.x + this.size / 2; const myCy = this.y + this.size / 2;
-                const angle = Math.atan2(pCy - myCy, pCx - myCx);
-                this.vx = Math.cos(angle) * this.speed;
-                this.vy = Math.sin(angle) * this.speed;
+                // 화면 밖 랜덤 생성
+                const edge = Math.floor(Math.random() * 4);
+                if(edge===0){this.x=Math.random()*window.innerWidth;this.y=-200;}
+                else if(edge===1){this.x=window.innerWidth+200;this.y=Math.random()*window.innerHeight;}
+                else if(edge===2){this.x=Math.random()*window.innerWidth;this.y=window.innerHeight+200;}
+                else{this.x=-200;this.y=Math.random()*window.innerHeight;}
+                
+                this.size = 180; 
+                this.speed = 150 + Math.random() * 100; 
+                this.vx = 0; this.vy = 0; 
+                this.isRepelled = false;
+                this.repelTime = 0;
+                // [수정] 한 번이라도 튕겨 나갔는지 여부 확인용 플래그
+                this.everRepelled = false;
             }
 
             update(dt) {
                 const pCx = window.innerWidth / 2; const pCy = window.innerHeight / 2;
                 const myCx = this.x + this.size / 2; const myCy = this.y + this.size / 2;
-                const distToPizza = Math.sqrt((pCx-myCx)**2 + (pCy-myCy)**2);
-                const distToMouse = Math.sqrt((myCx-mouseX)**2 + (myCy-mouseY)**2);
-                const shieldRadius = (this.size / 2) + 50; // 쉴드 범위
-
-                if (distToMouse < shieldRadius && !this.isRepelled) {
-                    this.isRepelled = true;
-                    this.vx = ((myCx - mouseX) / distToMouse) * 1000;
-                    this.vy = ((myCy - mouseY) / distToMouse) * 1000;
+                
+                if (!this.isRepelled) {
+                    // 피자를 향해 돌진
+                    const angle = Math.atan2(pCy - myCy, pCx - myCx);
+                    this.vx = Math.cos(angle) * this.speed;
+                    this.vy = Math.sin(angle) * this.speed;
+                } else {
+                    // 튕겨나가는 중 (감속)
+                    this.repelTime += dt;
+                    if(this.repelTime > 0.5) { this.isRepelled = false; this.repelTime = 0; }
                 }
 
-                this.x += this.vx * dt;
+                this.x += this.vx * dt; 
                 this.y += this.vy * dt;
                 this.el.style.left = this.x + 'px'; this.el.style.top = this.y + 'px';
 
-                if (!this.isRepelled && distToPizza < 100) return 'HIT_PIZZA';
-                if (this.x < -400 || this.x > window.innerWidth + 400 || this.y < -400 || this.y > window.innerHeight + 400) return 'OUT';
+                // 충돌 감지 (결계)
+                const distToMouse = Math.sqrt((myCx-mouseX)**2 + (myCy-mouseY)**2);
+                const shieldRadius = (this.size / 2) + 60; 
+
+                if (distToMouse < shieldRadius && !this.isRepelled) {
+                    this.isRepelled = true;
+                    // [수정] 한 번이라도 튕기면 everRepelled를 true로 설정
+                    this.everRepelled = true;
+                    const angleM = Math.atan2(myCy - mouseY, myCx - mouseX); 
+                    const repelForce = 600; 
+                    this.vx = Math.cos(angleM) * repelForce;
+                    this.vy = Math.sin(angleM) * repelForce;
+                    
+                    const shield = document.getElementById('shield');
+                    if(shield) {
+                        shield.style.transform = 'translate(-50%, -50%) scale(1.2)';
+                        setTimeout(() => shield.style.transform = 'translate(-50%, -50%) scale(1)', 100);
+                    }
+                }
+
+                // 충돌 감지 (피자)
+                const distToPizza = Math.sqrt((pCx-myCx)**2 + (pCy-myCy)**2);
+                // [수정] everRepelled가 false일 때만(한 번도 안 튕겼을 때만) 게임오버 판정
+                if (!this.everRepelled && distToPizza < 80) return 'HIT_PIZZA'; 
+                
+                if (this.x < -500 || this.x > window.innerWidth + 500 || this.y < -500 || this.y > window.innerHeight + 500) return 'OUT';
                 return 'ALIVE';
             }
         }
 
+        // [수정] 마우스 핸들러 (전역)
+        function handleShieldMove(e) { 
+            mouseX = e.clientX; 
+            mouseY = e.clientY; 
+            const shield = document.getElementById('shield');
+            if(shield) {
+                shield.style.left = mouseX + 'px'; 
+                shield.style.top = mouseY + 'px'; 
+            }
+        }
+        window.addEventListener('mousemove', handleShieldMove);
+
+        // [수정] 3단계 실행 로직 (전역 변수 사용)
         function initStage3() {
+            // 기존 루프 정리
+            if(defenseInterval) clearInterval(defenseInterval);
+
             enemies = []; spawnRate = 0.5; spawnTimer = 0; survivalTime = 15;
-            document.getElementById('timer').style.display = 'block';
+            
+            // UI 표시
+            const timerEl = document.getElementById('timer');
+            timerEl.style.display = 'block';
+            timerEl.style.color = '#00ff00';
+            
             document.getElementById('shield').style.display = 'block';
             document.getElementById('time-bar-container').style.display = 'block';
             document.getElementById('time-bar').style.width = '100%';
             document.body.style.cursor = 'none';
             
-            document.addEventListener('mousemove', handleShieldMove);
-            
+            // 적 제거
             document.querySelectorAll('.mint-choco').forEach(e => e.remove());
 
-            lastTime = performance.now();
-            gameLoopId = requestAnimationFrame(defenseLoop);
+            // [수정] setInterval로 게임 루프 시작 (0.02초마다 실행)
+            defenseInterval = setInterval(defenseGameLogic, 20);
         }
 
-        function handleShieldMove(e) { mouseX = e.clientX; mouseY = e.clientY; document.getElementById('shield').style.left = mouseX + 'px'; document.getElementById('shield').style.top = mouseY + 'px'; }
-
-        function defenseLoop(timestamp) {
-            const dt = (timestamp - lastTime) / 1000;
-            lastTime = timestamp;
-            if (dt > 0.1) { requestAnimationFrame(defenseLoop); return; } // 렉 방지
+        function defenseGameLogic() {
+            const dt = 0.02; // 고정 델타 타임
 
             survivalTime -= dt;
             if(survivalTime < 0) survivalTime = 0;
             document.getElementById('timer').innerText = survivalTime.toFixed(2);
             document.getElementById('time-bar').style.width = (survivalTime / MAX_SURVIVAL_TIME) * 100 + '%';
 
-            if (survivalTime <= 0) { gameWinStage3(); return; }
+            if (survivalTime <= 0) { 
+                clearInterval(defenseInterval); 
+                gameWinStage3(); 
+                return; 
+            }
 
             spawnTimer += dt;
             if (spawnTimer > spawnRate) {
-                enemies.push(new MintChoco());
-                spawnTimer = 0;
-                if (spawnRate > 0.1) spawnRate -= 0.01; // 점점 빨라짐
+                enemies.push(new MintChoco()); spawnTimer = 0;
+                if (spawnRate > 0.1) spawnRate -= 0.01; 
             }
 
             for (let i = enemies.length - 1; i >= 0; i--) {
                 const status = enemies[i].update(dt);
-                if (status === 'HIT_PIZZA') { endGame(); return; }
+                if (status === 'HIT_PIZZA') { 
+                    clearInterval(defenseInterval); 
+                    endGame(); 
+                    return; 
+                }
                 else if (status === 'OUT') { enemies[i].el.remove(); enemies.splice(i, 1); }
             }
-            gameLoopId = requestAnimationFrame(defenseLoop);
         }
 
         function endGame() {
-            cancelAnimationFrame(gameLoopId); document.removeEventListener('mousemove', handleShieldMove);
             document.body.style.cursor = 'default';
-            document.getElementById('game-over').classList.add('active');
-            document.getElementById('fail-reason').innerText = "민트초코에 오염되었습니다.";
-            document.getElementById('btn-retry').onclick = () => {
-                enemies.forEach(e => e.el.remove());
-                document.getElementById('game-over').classList.remove('active');
-                initStage3(); 
-            };
+            document.getElementById('timer').style.display = 'none';
+            enemies.forEach(e => e.el.remove());
+            failGame("민트초코에 오염되었습니다.");
         }
 
         function gameWinStage3() {
-            cancelAnimationFrame(gameLoopId); document.removeEventListener('mousemove', handleShieldMove);
             enemies.forEach(e => e.el.remove()); 
             document.body.style.cursor = 'default';
             document.getElementById('shield').style.display = 'none';
             document.getElementById('time-bar-container').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+
             playInterlude(bridgeRitualData, () => { showStage('stage-ritual'); initRitualStage(); });
         }
 
@@ -1138,7 +1211,6 @@
             };
         }
 
-        // 반짝이 생성 함수
         function createSparkles() {
             const container = document.getElementById('victory-screen');
             for (let i = 0; i < 30; i++) {
@@ -1157,22 +1229,10 @@
         function showVictoryScreen() {
             showStage('victory-screen'); 
             document.getElementById('victory-screen').classList.add('active');
-            
             createSparkles();
-
-            // [수정] 다운로드 버튼 클릭 시 예수님 이미지(tomato_sauce.jpg) 다운로드
-            document.getElementById('btn-download').onclick = () => {
-                const link = document.createElement('a'); 
-                link.href = 'pizzathegod.png'; // 예수님 이미지로 설정됨
-                link.download = 'sacred_jesus.jpg'; // 저장될 파일명
-                document.body.appendChild(link); 
-                link.click(); 
-                document.body.removeChild(link); 
-                alert("성스러운 피자가 강림했습니다.");
-            };
+            
             document.getElementById('btn-share').onclick = () => { navigator.clipboard.writeText(window.location.href).then(() => alert("링크 복사 완료.")).catch(() => prompt("링크 복사:", window.location.href)); };
             document.getElementById('btn-restart-game').onclick = () => location.reload();
-            
             const titles = ["과즙의 사도", "신성한 조각", "오븐의 파수꾼", "황금 혀의 시종"];
             document.getElementById('new-cult-name').textContent = `${titles[Math.floor(Math.random()*titles.length)]} ${Math.floor(Math.random()*900)+100}호`;
         }
