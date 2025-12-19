@@ -5,14 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>황금 파인애플 교단</title>
     <style>
-        /* --- 기본 설정 --- */
         @font-face {
             font-family: 'SF_HambakSnow';
             src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2106@1.1/SF_HambakSnow.woff') format('woff');
             font-weight: normal; font-style: normal;
         }
 
-        /* 스크롤 및 터치 동작 제어 */
         html, body {
             width: 100%; height: 100%; margin: 0; padding: 0; 
             overflow: hidden !important; 
@@ -26,12 +24,10 @@
             display: flex; justify-content: center; align-items: center; text-align: center; position: relative; user-select: none;
         }
 
-        /* 배경 클래스 */
         body.back-1 { background-image: url('back1.png'); filter: contrast(1.1) saturate(1.2); }
         body.back-oven { background-image: url('oven-bg.jpg'); filter: contrast(1.2) sepia(0.3); } 
         body.back-2 { background-image: url('back2.png'); filter: hue-rotate(-10deg) contrast(1.1); }
 
-        /* 노이즈 효과 */
         .screen-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
@@ -44,7 +40,6 @@
         }
         @keyframes noise { 0%, 100% { background-position: 0 0; } 50% { background-position: -25% 10%; } }
 
-        /* 스테이지 */
         .stage {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; padding: 0; margin: 0;
             background: radial-gradient(circle at center, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.5) 100%);
@@ -55,7 +50,6 @@
         
         #interlude-stage { z-index: 200; background: rgba(0, 0, 0, 0.4); }
 
-        /* [신규] 튜토리얼 오버레이 (플래시 게임 스타일) */
         #tutorial-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.85); z-index: 9999;
@@ -96,11 +90,9 @@
         .tut-btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #b3009b; }
 
 
-        /* 성찬식 단계 배경 설정 */
         #stage-ritual { background-image: url('back2.png'); background-size: cover; background-position: center; cursor: pointer; position: relative; min-height: 100vh; }
         #stage-ritual::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.2); z-index: 1; pointer-events: none; }
         
-        /* GIF 레이어 */
         #ritual-hand-gif {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             object-fit: cover; 
@@ -110,7 +102,6 @@
         }
         #stage-ritual > h2, #stage-ritual > p, #final-pizza { z-index: 10; position: relative; }
 
-        /* 타이포그래피 */
         h1 { 
             color: #ff9de2; font-weight: 400; text-shadow: 2px 2px 0px #00ff00;
             margin-bottom: 10px; margin-top: 60px; font-size: 3em; letter-spacing: -2px;
@@ -123,7 +114,6 @@
         #stage-2 h2, #stage-dough h2, #stage-topping h2 { margin-top: 60px; }
         p { font-size: 1.2em; line-height: 1.6; color: #eee; max-width: 800px; text-shadow: 1px 1px 2px black; }
 
-        /* 글리치 효과 */
         .glitch { position: relative; }
         .glitch::before, .glitch::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         .glitch::before { left: 2px; text-shadow: -1px 0 #ff00c1; clip: rect(44px, 450px, 56px, 0); animation: glitch-anim 5s infinite linear alternate-reverse; }
@@ -131,7 +121,6 @@
         @keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 30px, 0); } 100% { clip: rect(70px, 9999px, 80px, 0); } }
         @keyframes glitch-anim2 { 0% { clip: rect(60px, 9999px, 10px, 0); } 100% { clip: rect(20px, 9999px, 50px, 0); } }
 
-        /* 버튼 */
         .next-btn, button { 
             background-color: #000; color: #fff; border: 2px solid #fff; border-radius: 0;
             padding: 15px 30px; font-size: 1.2em; font-family: 'SF_HambakSnow'; cursor: pointer; margin-top: 40px; 
@@ -141,7 +130,6 @@
         button:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0px #00ff00; }
         button:disabled { background-color: #333; color: #555; border-color: #555; box-shadow: none; cursor: not-allowed; }
 
-        /* 캐릭터 & VN 스타일 */
         #vn-layer, .vn-layer-common { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; pointer-events: none; }
         .vn-char-container {
             position: fixed;
@@ -168,7 +156,6 @@
         .next-indicator, .next-indicator-common { position: absolute; bottom: 10px; right: 20px; color: #ff00de; font-size: 1.2em; animation: blink 0.5s infinite; display: none; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* 1단계 (우상 파괴) */
         #idol-status-window {
             position: fixed; width: 320px; background-color: rgba(0, 0, 0, 0.95);
             border: 2px solid #fff; box-shadow: 5px 5px 0px #ff00de; 
@@ -193,7 +180,6 @@
         .idol-wrapper.destroyed .idol-crack { opacity: 1; }
         @keyframes shatter { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.5) rotate(20deg); opacity: 0; filter: blur(10px); } }
 
-        /* 1.5단계 (반죽) */
         .rhythm-container { position: relative; width: 300px; height: 400px; margin: 20px auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 20px; }
         #key-display { width: 160px; height: auto; z-index: 20; margin-bottom: 20px; filter: drop-shadow(0 0 10px #fff); transition: transform 0.2s; }
         #dough-visual { width: 200px; height: 200px; background-color: #ffeaa7; border-radius: 50%; box-shadow: inset -5px -5px 0px rgba(0,0,0,0.1); border: 3px solid #fff; position: relative; transition: transform 0.1s; }
@@ -202,7 +188,6 @@
         .progress-bar-fill { width: 0%; height: 100%; background: repeating-linear-gradient(45deg, #ff00de, #ff00de 10px, #ff5eeb 10px, #ff5eeb 20px); transition: width 0.2s; }
         .life-container { font-size: 2rem; margin-bottom: 10px; color: #ff00de; text-shadow: 0 0 5px #fff; }
 
-        /* 1.8단계 (소스) */
         #sauce-game-area { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: auto; z-index: 5; overflow: hidden; cursor: crosshair; }
         #stage-sauce h2 { position: absolute; top: 130px; left: 0; width: 100%; margin: 0; z-index: 15; pointer-events: none; text-shadow: 0 0 5px #000; }
         .hud-top { position: absolute; top: auto; bottom: 240px; width: 100%; text-align: center; z-index: 20; pointer-events: none; }
@@ -220,7 +205,6 @@
         @keyframes fadeOut { from { opacity: 1; transform: translate(-50%, -50%) scale(1); } to { opacity: 0; transform: translate(-50%, -50%) scale(1.5); } }
         .sauce-info-text { font-size: 2rem; color: #fdcb6e; font-weight: bold; text-shadow: 2px 2px 0 #000; display: block; margin-bottom: 5px; }
 
-        /* 1.9단계 (토핑) */
         .common-pizza-frame { 
             width: 500px; height: 500px; 
             max-width: 90vw; max-height: 55vh; 
@@ -229,7 +213,6 @@
             display: flex; justify-content: center; align-items: center; overflow: hidden;
         }
         
-        /* 2단계 (오븐) 레이아웃 */
         #oven-pizza-wrapper {
             width: 350px; height: 350px; 
             margin-bottom: 5px; 
@@ -246,7 +229,6 @@
         .placed-pineapple { position: absolute; width: 60px; height: 60px; border-radius: 50%; background-image: url('pineappleslice.png'); background-size: cover; transform: translate(-50%, -50%); z-index: 15; animation: pop 0.3s ease-out; }
         @keyframes pop { 0% { transform: translate(-50%, -50%) scale(0); } 80% { transform: translate(-50%, -50%) scale(1.2); } 100% { transform: translate(-50%, -50%) scale(1); } }
 
-        /* 2단계 (오븐) */
         .oven-visual { display: flex; justify-content: center; align-items: center; width: 100%; height: auto; margin-bottom: 20px; position: relative; z-index: 5; }
         .fire-overlay { position: absolute; top: -50px; left: -50px; right: -50px; bottom: -50px; background: radial-gradient(circle, rgba(255, 71, 87, 0.8) 0%, rgba(255,0,0,0) 70%); opacity: 0; pointer-events: none; mix-blend-mode: hard-light; transition: opacity 0.1s; }
         
@@ -278,7 +260,6 @@
 
         .temp-text { font-size: 1.5em; color: #fff; font-weight: bold; text-shadow: 0 0 10px #e67e22; margin-top: 5px; }
         
-        /* 3단계 (디펜스) & 기타 */
         #time-bar-container { position: absolute; top: 0; left: 0; width: 100%; height: 15px; background-color: rgba(0,0,0,0.5); z-index: 500; display: none; border-bottom: 2px solid #fff; }
         #time-bar { width: 100%; height: 100%; background-color: #fdcb6e; transition: width 0.1s linear; }
         
@@ -303,7 +284,6 @@
         #white-flash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 9999; pointer-events: none; opacity: 0; transition: opacity 2s ease-in; }
         .flash-active { opacity: 1 !important; }
 
-        /* 엔딩 */
         .end-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 300; opacity: 0; pointer-events: none; transition: opacity 1s; }
         .end-screen.active { opacity: 1; pointer-events: auto; }
         #game-over { background: rgba(62, 180, 137, 0.95); }
@@ -554,7 +534,6 @@
     <div id="time-bar-container"><div id="time-bar"></div></div>
 
     <script>
-        // --- 전역 데이터 ---
         const idolData = {
             "페퍼로니": { desc: "짜고 기름진 붉은 원반. 단맛이라곤 찾아볼 수 없는 야만적인 고기 조각.", impurity: 85 },
             "콤비네이션": { desc: "이도 저도 아닌 혼란의 덩어리. 정체성 없이 뒤섞인 잡탕의 표본.", impurity: 92 },
@@ -569,17 +548,14 @@
             'defense': { title: "5. 이단의 습격", desc: "마우스 커서가 강력한 방패가 됩니다.<br>달려드는 민트초코들을 쳐내서<br>15초 동안 피자를 지키세요!" }
         };
 
-        // --- 전역 변수 ---
         const stages = document.querySelectorAll('.stage');
         let gameLoopId, timerInterval, ovenLoopId, sauceInterval, lastTime = 0; 
         
-        // 3단계 전용 변수
         let defenseInterval; 
         let mouseX = 0, mouseY = 0;
         let enemies = [], spawnRate = 0.5, spawnTimer = 0, survivalTime = 15;
         const MAX_SURVIVAL_TIME = 15;
 
-        // --- 유틸리티 ---
         function showStage(stageId) {
             const targetStage = document.getElementById(stageId);
             if (!targetStage) return;
@@ -593,14 +569,12 @@
             else document.body.className = 'back-1';
         }
 
-        // 공통 게임 실패 처리 함수
         function failGame(reason) {
             document.getElementById('game-over').classList.add('active');
             document.getElementById('fail-reason').innerText = reason;
             document.getElementById('btn-retry').onclick = () => location.reload();
         }
 
-        // --- 튜토리얼 기능 ---
         function openTutorial(key, callback) {
             const info = tutorialInfo[key];
             const overlay = document.getElementById('tutorial-overlay');
@@ -611,16 +585,14 @@
             titleEl.innerText = info.title;
             contentEl.innerHTML = info.desc;
             
-            overlay.style.display = 'flex'; // 보이기
+            overlay.style.display = 'flex'; 
 
-            // 버튼 원타임 클릭 이벤트
             btn.onclick = () => {
-                overlay.style.display = 'none'; // 숨기기
+                overlay.style.display = 'none'; 
                 if (callback) callback();
             };
         }
 
-        // --- 초기화 ---
         document.addEventListener('DOMContentLoaded', () => initIntro());
 
         function initIntro() {
@@ -635,48 +607,106 @@
             };
         }
 
-        // --- 브릿지 대사 ---
         const bridge1Data = [
             "크흐흐... 들리십니까? 위선의 우상들이 산산조각 나는 소리가...", 
             "당신의 손에서 일어난 파괴... 그것은 단순한 물리적 행위가 아닙니다.",
             "당신은 스스로의 과거를, 거짓된 신념을 깨뜨린 것입니다.",
-            "이제 진정한 여정이 시작됩니다.",
-            "손가락이 가리키는 성스러운 방향을 따르세요. 의심은 반죽을 망칩니다."
+            "첫 번째 시련을 통과했습니다. 하지만...",
+            "진정한 여정은 이제부터입니다.",
+            "수천 년 동안 인류는 잘못된 토핑의 노예로 살아왔습니다.",
+            "페퍼로니의 기름진 거짓말, 콤비네이션의 혼란스러운 유혹...",
+            "그들은 당신에게 '선택의 자유'라는 환상을 주었죠.",
+            "하지만 진정한 자유는... 진리를 받아들일 때만 찾아옵니다.",
+            "이제 당신의 손으로 '진리의 반죽'을 빚을 시간입니다.",
+            "손가락이 가리키는 성스러운 방향을 따르세요.",
+            "각 움직임에는 깨달음이 담겨 있습니다.",
+            "주저하지 마십시오. 의심은 반죽을 망칩니다."
         ];
         const bridgeSauceData = [
             "...완벽합니다.", 
-            "당신의 손에서 만들어진 이 반죽에는 균형이 깃들어 있습니다.",
-            "이제 하늘에서 내리는 붉은 은총을 받을 시간입니다.",
-            "떨어지는 토마토들을 하나도 놓치지 말고 베어내십시오."
+            "당신의 손에서 만들어진 이 반죽에는...",
+            "수백 명의 신도들이 평생 찾지 못한 '균형'이 깃들어 있습니다.",
+            "반죽은 기초입니다. 하지만... 기초만으로는 신이 될 수 없죠.",
+            "이제 당신은 선택의 기로에 섰습니다.",
+            "전설에 따르면, 최초의 파인애플 피자는...",
+            "자발적으로 헌신한 토마토들의 붉은 눈물로 만들어졌다고 합니다.",
+            "그들은 기꺼이 자신을 내어주었죠. 완성을 위해.",
+            "당신도 그 의식을 재현해야 합니다.",
+            "떨어지는 토마토들... 그들은 단순한 재료가 아닙니다.",
+            "각자가 '구원받고 싶다'는 소망으로 하늘에서 내려오는 것입니다.",
+            "하나도 놓치지 마십시오. 그들의 희생을 헛되이 하지 마십시오.",
+            "당신의 손으로 그들의 소망을 이루어주십시오."
         ];
         const bridgeToppingData = [
             "...잠시만요. 이 향기...", 
-            "토마토들이 당신을 선택했습니다.",
-            "하지만 가장 위험한 시험이 남았습니다.",
+            "제가 50년간 교단을 이끌면서도 맡아보지 못한 완벽한 소스의 향입니다.",
+            "토마토들이... 당신을 선택했습니다.",
+            "그들의 붉은 정수가 당신의 손길에 화답한 것입니다.",
+            "당신에게는... 특별한 무언가가 있군요.",
+            "어쩌면 예언에서 말하던 '황금 혀의 선택받은 자'가...",
+            "하지만 아직 확신할 수 없습니다.",
+            "가장 위험한 시험이 남았습니다.",
             "파인애플... 논쟁의 중심에 선 과일.",
-            "이 다섯 조각을 정확한 위치에 놓으십시오."
+            "어떤 이들은 이를 '신성모독'이라 부르고,",
+            "또 다른 이들은 '계시'라고 부릅니다.",
+            "50년 전, 창시자는 이 배치를 잘못해 손가락 세 개를 잃었습니다.",
+            "10년 전, 한 신도는 완벽에 가까웠지만... 1도 어긋나 실명했죠.",
+            "이 다섯 조각을 정확한 위치에 놓으십시오.",
+            "한 조각이라도 어긋나면... 모든 것이 무너집니다."
         ];
         const bridgeOvenData = [
-            "...믿을 수가 없습니다. 완벽한 오각형의 균형...",
-            "이제 가장 뜨거운 시련이 다가옵니다.",
-            "오븐의 온도를 일정하게 유지해야 합니다.",
-            "스페이스바를 눌러 열기를 주입하고, 놓아서 식히십시오.",
-            "신이 지정한 노란색 온도 구간을 벗어나지 마십시오!"
+            "...믿을 수가 없습니다.", 
+            "완벽한 오각형의 균형...",
+            "이것은 1985년, 창시자가 처음 계시를 받았을 때의 배치와 정확히 일치합니다!",
+            "당신은... 진짜입니다. 예언된 그 사람...",
+            "40년을 기다렸습니다. 40년을...",
+            "하지만 기뻐하기에는 이릅니다.",
+            "가장 위험한 순간이 다가옵니다.",
+            "400도... 신과 악마가 만나는 온도입니다.",
+            "너무 낮으면 반죽은 죽지 않고 계속 부패합니다.",
+            "너무 높으면... 모든 것이 재로 변합니다.",
+            "이 불길 속에서 피자는 두 가지 운명 중 하나를 맞이합니다.",
+            "영원한 완성, 혹은 영원한 소멸.",
+            "당신의 신념만이 그 결과를 결정합니다.",
+            "화면을 응시하십시오. 눈을 떼는 순간... 모든 것이 끝납니다."
         ];
         const bridgeDefenseData = [
             "오오... 이 황금빛 광채를...", 
             "파인애플이 완벽하게 캐러멜화되었습니다!",
+            "치즈의 실이... 마치 성스러운 실타래처럼...",
+            "당신은 해냈습니다. 전설의 피자를 완성한 것입니다!",
+            "이제 영원한 구원이 약속된...",
             "...?!",
             "...안 됩니다. 이 냄새는...",
             "민트초코... 저주받은 반대 교단의 악취!",
-            "그들이 당신의 피자를 타락시키려 합니다!",
-            "마우스로 결계를 쳐서 그들을 막아내십시오!"
+            "그들이 감지했습니다! 완벽한 피자의 탄생을!",
+            "어떻게...? 우리 결계를 뚫고...?!",
+            "그들은 질투합니다. 조화를 이루는 모든 것을.",
+            "민트와 초콜릿... 결코 만나서는 안 될 두 존재의 금단의 결합.",
+            "차가운 민트, 달콤한 초콜릿... 그것은 위선입니다!",
+            "진정한 조화가 아닌, 강제된 결합! 부자연스러운 융합!",
+            "그들은 당신의 피자를 타락시키려 합니다!",
+            "15초... 그들의 공격이 끝날 때까지",
+            "당신의 피자를, 당신의 신념을 지켜내십시오!"
         ];
         const bridgeRitualData = [
             "...기적입니다.", 
             "민트초코의 저주를 물리쳤습니다...",
+            "50년 교단 역사상... 아니, 인류 역사상 이런 일은 처음입니다.",
+            "당신 앞에 놓인 이 피자를 보십시오.",
+            "완벽한 황금빛 갈색. 녹아내린 치즈의 실. 캐러멜화된 파인애플.",
+            "각 조각이 하나의 우주를 품고 있습니다.",
+            "이것은 더 이상 음식이 아닙니다.",
+            "이것은 '계시'입니다. '진리의 현현(顯現)'입니다.",
+            "수천 명이 평생 찾아 헤매도 보지 못하는 완성.",
+            "저는... 40년을 기다렸습니다.",
+            "무수한 신도들이 이 순간을 보지 못하고 떠났습니다.",
+            "그러나 당신이 해냈습니다.",
             "이제... 마지막 의식만이 남았습니다.",
-            "입을 벌리고, 이 진리를 받아들이십시오."
+            "입을 벌리고, 이 진리를 받아들이십시오.",
+            "한 입을 베어물 때, 당신은 더 이상 예전의 당신이 아닙니다.",
+            "당신은 '깨달은 자', '황금 혀를 가진 자'가 됩니다.",
+            "주저하지 마십시오. 이것은... 당신의 운명입니다."
         ];
 
         let interludeIndex = 0, interludeCallback = null, interludeTexts = [], isInterludeTyping = false, interludeTimeout;
@@ -701,10 +731,15 @@
             let i = 0; function type() { if (i < text.length) { textEl.textContent += text.charAt(i); i++; interludeTimeout = setTimeout(type, 30); } else { isInterludeTyping = false; indicator.style.display = 'block'; } } type();
         }
 
-        // --- 1단계: 참회 ---
         const dialogueData = [
             "어서 오십시오, 길을 잃은 어린 양이여.", 
             "이곳까지 오는 것도... 쉽지 않았을 겁니다.",
+            "그대의 혀는... 거짓된 맛에 속아왔군요.", 
+            "페퍼로니의 기름, 콤비네이션의 혼돈...",
+            "그것들은 진리가 아닌 위안이었을 뿐입니다.",
+            "하지만 이제 당신은 선택했습니다. 진리를.",
+            "파인애플 피자를 통해 진정한 맛의 길로 인도될 것입니다.", 
+            "그 전에... 정화가 필요합니다.",
             "저 역겨운 우상들을 보십시오.",
             "그대의 손으로 직접 파괴하십시오!",
             "그것이 첫 번째 시련입니다."
@@ -766,7 +801,6 @@
                     }
                 });
             });
-            // [수정] 튜토리얼 연결
             nextBtn.onclick = () => { 
                 playInterlude(bridge1Data, () => {
                     openTutorial('dough', () => {
@@ -777,7 +811,6 @@
             };
         }
 
-        // --- 1.5단계: 반죽 ---
         let doughScore = 0, doughMistakes = 0;
         const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
         let currentDoughKey = '';
@@ -794,7 +827,6 @@
                     visual.style.transform = 'scale(1.2, 0.8)'; setTimeout(()=>visual.style.transform='scale(1)', 100);
                     if(doughScore >= 20) {
                         window.onkeydown = null;
-                        // [수정] 튜토리얼 연결
                         playInterlude(bridgeSauceData, () => {
                             openTutorial('sauce', () => {
                                 showStage('stage-sauce'); 
@@ -826,7 +858,6 @@
             document.getElementById('dough-life').innerText = hearts;
         }
 
-        // --- 1.8단계: 토마토 닌자 ---
         let sauceScore = 0; const SAUCE_GOAL = 15; let sauceTimeLeft = 15; let tomatoes = []; let spawnIntervalId;
 
         function initSlashEffect() {
@@ -898,7 +929,6 @@
             document.getElementById('sauce-game-area').innerHTML = ''; const transitionEl = document.getElementById('pizza-transition'); transitionEl.classList.add('slide-in');
             setTimeout(() => { 
                 transitionEl.classList.remove('slide-in'); 
-                // [수정] 튜토리얼 연결
                 playInterlude(bridgeToppingData, () => { 
                     openTutorial('topping', () => {
                         showStage('stage-topping'); 
@@ -908,7 +938,6 @@
             }, 1200);
         }
 
-        // --- 1.9단계: 파인애플 토핑 ---
         let pineapplesPlaced = 0;
         function initStageTopping() {
             pineapplesPlaced = 0;
@@ -935,7 +964,6 @@
             });
         }
         function completeToppingStage() { 
-            // [수정] 튜토리얼 연결
             playInterlude(bridgeOvenData, () => { 
                 openTutorial('oven', () => {
                     showStage('stage-2'); 
@@ -944,12 +972,11 @@
             }); 
         }
 
-        // --- 2단계: 오븐 (온도 유지 미니게임으로 수정됨) ---
         let ovenTime = 20; 
-        let stability = 100; // 안정도
-        let currentTemp = 100; // 유저 온도 (0 ~ 400)
-        let targetTempCenter = 200; // 목표 온도 중심 (계속 바뀜)
-        const RANGE_WIDTH = 90; // [수정] 목표 온도 범위 너비 확대 (70 -> 90)
+        let stability = 100;
+        let currentTemp = 100; 
+        let targetTempCenter = 200; 
+        const RANGE_WIDTH = 90;
         
         let isSpacePressed = false;
 
@@ -1028,7 +1055,6 @@
             window.onkeydown = null; window.onkeyup = null;
             document.getElementById('bgm-bonfire').pause();
             if(success) {
-                // [수정] 튜토리얼 연결
                 playInterlude(bridgeDefenseData, () => { 
                     openTutorial('defense', () => {
                         showStage('stage-3'); 
@@ -1037,15 +1063,12 @@
                 });
             } else failGame("온도 조절 실패. 피자가 타버렸거나 덜 익었습니다.");
         }
-
-        // --- 3단계: 피자 수호 (수정됨: 멈춤 현상 완벽 해결) ---
         
         class MintChoco {
             constructor() {
                 this.el = document.createElement('div'); this.el.className = 'mint-choco';
                 document.body.appendChild(this.el);
                 
-                // 화면 밖 랜덤 생성
                 const edge = Math.floor(Math.random() * 4);
                 if(edge===0){this.x=Math.random()*window.innerWidth;this.y=-200;}
                 else if(edge===1){this.x=window.innerWidth+200;this.y=Math.random()*window.innerHeight;}
@@ -1057,7 +1080,6 @@
                 this.vx = 0; this.vy = 0; 
                 this.isRepelled = false;
                 this.repelTime = 0;
-                // [수정] 한 번이라도 튕겨 나갔는지 여부 확인용 플래그
                 this.everRepelled = false;
             }
 
@@ -1066,12 +1088,10 @@
                 const myCx = this.x + this.size / 2; const myCy = this.y + this.size / 2;
                 
                 if (!this.isRepelled) {
-                    // 피자를 향해 돌진
                     const angle = Math.atan2(pCy - myCy, pCx - myCx);
                     this.vx = Math.cos(angle) * this.speed;
                     this.vy = Math.sin(angle) * this.speed;
                 } else {
-                    // 튕겨나가는 중 (감속)
                     this.repelTime += dt;
                     if(this.repelTime > 0.5) { this.isRepelled = false; this.repelTime = 0; }
                 }
@@ -1080,13 +1100,11 @@
                 this.y += this.vy * dt;
                 this.el.style.left = this.x + 'px'; this.el.style.top = this.y + 'px';
 
-                // 충돌 감지 (결계)
                 const distToMouse = Math.sqrt((myCx-mouseX)**2 + (myCy-mouseY)**2);
                 const shieldRadius = (this.size / 2) + 60; 
 
                 if (distToMouse < shieldRadius && !this.isRepelled) {
                     this.isRepelled = true;
-                    // [수정] 한 번이라도 튕기면 everRepelled를 true로 설정
                     this.everRepelled = true;
                     const angleM = Math.atan2(myCy - mouseY, myCx - mouseX); 
                     const repelForce = 600; 
@@ -1100,9 +1118,7 @@
                     }
                 }
 
-                // 충돌 감지 (피자)
                 const distToPizza = Math.sqrt((pCx-myCx)**2 + (pCy-myCy)**2);
-                // [수정] everRepelled가 false일 때만(한 번도 안 튕겼을 때만) 게임오버 판정
                 if (!this.everRepelled && distToPizza < 80) return 'HIT_PIZZA'; 
                 
                 if (this.x < -500 || this.x > window.innerWidth + 500 || this.y < -500 || this.y > window.innerHeight + 500) return 'OUT';
@@ -1110,7 +1126,6 @@
             }
         }
 
-        // [수정] 마우스 핸들러 (전역)
         function handleShieldMove(e) { 
             mouseX = e.clientX; 
             mouseY = e.clientY; 
@@ -1122,14 +1137,11 @@
         }
         window.addEventListener('mousemove', handleShieldMove);
 
-        // [수정] 3단계 실행 로직 (전역 변수 사용)
         function initStage3() {
-            // 기존 루프 정리
             if(defenseInterval) clearInterval(defenseInterval);
 
             enemies = []; spawnRate = 0.5; spawnTimer = 0; survivalTime = 15;
             
-            // UI 표시
             const timerEl = document.getElementById('timer');
             timerEl.style.display = 'block';
             timerEl.style.color = '#00ff00';
@@ -1139,15 +1151,13 @@
             document.getElementById('time-bar').style.width = '100%';
             document.body.style.cursor = 'none';
             
-            // 적 제거
             document.querySelectorAll('.mint-choco').forEach(e => e.remove());
 
-            // [수정] setInterval로 게임 루프 시작 (0.02초마다 실행)
             defenseInterval = setInterval(defenseGameLogic, 20);
         }
 
         function defenseGameLogic() {
-            const dt = 0.02; // 고정 델타 타임
+            const dt = 0.02; 
 
             survivalTime -= dt;
             if(survivalTime < 0) survivalTime = 0;
@@ -1194,7 +1204,6 @@
             playInterlude(bridgeRitualData, () => { showStage('stage-ritual'); initRitualStage(); });
         }
 
-        // 4단계: 성찬식
         function initRitualStage() {
             const pizzaEl = document.getElementById('final-pizza');
             pizzaEl.onclick = function() {
